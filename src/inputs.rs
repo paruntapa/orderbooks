@@ -1,19 +1,18 @@
 use serde::{Deserialize, Serialize};
-use serde_json::Number;
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Debug)]
 
 pub struct CreateOrderInput {
-    pub price: String,
+    pub price: u32,
     pub quantity: u32,
-    pub user_id: Number,
+    pub user_id: u32,
     pub side: Side
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, PartialEq, Debug)]
 pub enum Side {
-    Bids,
-    Asks
+    Buy,
+    Sell
 }
 
 #[derive(Deserialize, Serialize, Debug)]
