@@ -31,10 +31,8 @@ pub async fn delete_order(Json(body): Json<Delete_Order>, orderbook: Data<OrderB
 }
 
 #[get("/depth")]
-pub async fn get_depth(orderbook: Data<OrderBook>) -> impl Responder {
-    HttpResponse::Ok().json(Depth {
-        bids: vec![],
-        asks: vec![],
-        lastUpdatedId: String::from("8768asd78as78d9a7s9da98ds9a87a98sd")
-    })
+pub async fn get_depth(orderbook: Data<Arc<Mutex<OrderBook>>>) -> impl Responder {
+    let orderbook = orderbook.lock().unwrap();
+    let depth_response = orderbook.get_depth();
+    HttpResponse::Ok().json(depth_response)
 }

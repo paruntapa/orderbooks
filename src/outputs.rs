@@ -15,7 +15,12 @@ pub struct DeleteOrderResponse {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Depth {
-    pub bids: Vec<[u32; 2]>,
-    pub asks: Vec<[u32; 2]>,
-    pub lastUpdatedId: String
+    pub price: f64,
+    pub quantity: f64,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct DepthResponse {
+    pub bids: Vec<Depth>,
+    pub asks: Vec<Depth>,
 }

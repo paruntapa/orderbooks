@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::{inputs::Side, outputs::Depth};
+use crate::{inputs::Side, outputs::{Depth, DepthResponse}};
 
 pub struct OrderBook {
     pub bids: HashMap<u32, Vec<UserOrder>>,
@@ -43,33 +43,19 @@ impl OrderBook {
             })
         }
     }
-
-    pub fn get_depth(&self, _user_id: u32) -> Depth {
-        let mut bids_vec = Vec::new();
-        let mut asks_vec = Vec::new();
-
-        // Convert bids HashMap to vector of [price, quantity] arrays
-        for (price, orders) in &self.bids {
-            let total_qty: u32 = orders.iter().map(|order| order.qty).sum();
-            bids_vec.push([*price, total_qty]);
+    pub fn get_depth(&self) -> DepthResponse {
+        let mut bids = Vec::new();
+        let mut asks = Vec::new();
+        for (price, orders) in self.bids.iter() {
+            bids.push(Depth { price: *price as f64, quantity: orders.iter().map(|o| o.qty).sum::<u32>() as f64 });
         }
-
-        // Convert asks HashMap to vector of [price, quantity] arrays
-        for (price, orders) in &self.asks {
-            let total_qty: u32 = orders.iter().map(|order| order.qty).sum();
-            asks_vec.push([*price, total_qty]);
+        for (price, orders) in self.asks.iter() {
+            asks.push(Depth { price: *price as f64, quantity: orders.iter().map(|o| o.qty).sum::<u32>() as f64 });  
         }
-
-        // Sort bids in descending order (highest price first)
-        bids_vec.sort_by(|a, b| b[0].cmp(&a[0]));
-        
-        // Sort asks in ascending order (lowest price first)
-        asks_vec.sort_by(|a, b| a[0].cmp(&b[0]));
-
-        Depth {
-            bids: bids_vec,
-            asks: asks_vec,
-            lastUpdatedId: format!("orderbook_{}", _user_id)
-        }
+        DepthResponse { bids, asks }
     }
 }
+
+
+
+// https://petal-estimate-4e9.notion.site/Week-3-CEXs-and-CLOBs-22f7dfd10735801aae3fda9fd3d9aa67
